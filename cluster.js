@@ -12,8 +12,12 @@ if (cluster.isMaster) {
             console.log(`Worker died. PID: ${worker.process.pid}`);
             cluster.fork();
         });
+        worker.send('Hello!')
+        worker.on('message', (msg)=>console.log(`Message:${msg.text} from ${msg.pid}`))
     }
 }
 if (cluster.isWorker){
     require('./worker')
+    process.on('message', (msg)=> console.log(msg))
+    process.send({text: 'hello', pid: pid})
 }
